@@ -444,9 +444,22 @@ def analyze_reports(
                 f"{job} - {fmt_money(upcoming_today_all_jobs[job]['revenue'])}"
             )
         elif job in job_notes_lookup:
-            jobs_with_notes_list.append(
-        f'{job} - "{job_notes_lookup[job]["note"]}" - {fmt_money(job_notes_lookup[job]["revenue"])}'
-    )
+            note_text = job_notes_lookup[job]["note"] if isinstance(job_notes_lookup[job], dict) else job_notes_lookup[job]
+        
+            # prefer today's upcoming revenue if available, otherwise yesterday scheduled revenue
+            if job in upcoming_today_all_jobs:
+                note_revenue = upcoming_today_all_jobs[job]["revenue"]
+            else:
+                note_revenue = scheduled_yesterday_for_today.get(job, {}).get("revenue", 0.0)
+        
+            if note_text:
+                jobs_with_notes_list.append(
+                    f'{job} - "{note_text}" - {fmt_money(note_revenue)}'
+                )
+            else:
+                jobs_with_notes_list.append(
+                    f"{job} - {fmt_money(note_revenue)}"
+                )
 
     extra_jobs_list = [
         f"{job} - {fmt_money(completed_jobs[job]['revenue'])}"
