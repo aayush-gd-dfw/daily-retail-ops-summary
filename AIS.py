@@ -376,7 +376,7 @@ def build_all_jobs_from_upcoming(rows: List[List[Any]]) -> Dict[str, Dict[str, A
     return jobs
 
 
-def build_job_notes_lookup(rows: List[List[Any]]) -> Dict[str, str]:
+def build_job_notes_lookup(rows: List[List[Any]]) -> Dict[str, Dict[str, Any]]:
     if not rows or len(rows) < 2:
         raise ValueError("Job Notes report is empty or missing rows.")
 
@@ -385,6 +385,7 @@ def build_job_notes_lookup(rows: List[List[Any]]) -> Dict[str, str]:
 
     job_col = find_col_idx(header, {"jobnumber", "job number", "job #", "job"})
     note_col = find_col_idx(header, {"jobnote", "job note", "job notes", "note", "notes"})
+    rev_col = find_col_idx(header, {"jobs subtotal", "subtotal"})
 
     if job_col is None or note_col is None:
         raise ValueError(f"Could not find required columns in Job Notes report. Header: {header}")
@@ -396,9 +397,13 @@ def build_job_notes_lookup(rows: List[List[Any]]) -> Dict[str, str]:
 
         job = normalize_job(r[job_col])
         note = str(r[note_col]).strip() if r[note_col] is not None else ""
+        revenue = parse_money(r[rev_col]) if rev_col is not None and len(r) > rev_col else 0.0
 
         if job and note:
-            notes[job] = note
+            notes[job] = {
+                "note": note,
+                "revenue": revenue
+            }
 
     return notes
 
@@ -440,8 +445,8 @@ def analyze_reports(
             )
         elif job in job_notes_lookup:
             jobs_with_notes_list.append(
-                f'{job} - "{job_notes_lookup[job]}"'
-            )
+        f'{job} - "{job_notes_lookup[job]["note"]}" - {fmt_money(job_notes_lookup[job]["revenue"])}'
+    )
 
     extra_jobs_list = [
         f"{job} - {fmt_money(completed_jobs[job]['revenue'])}"
