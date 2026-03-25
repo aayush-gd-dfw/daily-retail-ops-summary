@@ -1,0 +1,40 @@
+name: Daily Summary SharePoint Update
+
+on:
+  schedule:
+    # 10:30 PM America/Chicago
+    # CST = 04:30 UTC next day
+    # CDT = 03:30 UTC next day
+    # GitHub Actions cron uses UTC, so use both
+    - cron: "30 4 * 1,2,11,12 *"
+    - cron: "30 3 * 3-10 *"
+  workflow_dispatch:
+
+jobs:
+  run-daily-summary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily summary script
+        env:
+          tenant_id: ${{ secrets.TENANT_ID }}
+          client_id: ${{ secrets.CLIENT_ID }}
+          client_secret: ${{ secrets.CLIENT_SECRET }}
+          drive_id: ${{ secrets.DRIVE_ID }}
+          file_item_id: ${{ secrets.FILE_ITEM_ID }}
+          MAILBOX_UPN: ${{ secrets.MAILBOX_UPN }}
+        run: |
+          python AIS.py
