@@ -30,11 +30,11 @@ jobs:
 
       - name: Run daily summary script
         env:
-          tenant_id: ${{ secrets.TENANT_ID }}
-          client_id: ${{ secrets.CLIENT_ID }}
-          client_secret: ${{ secrets.CLIENT_SECRET }}
-          drive_id: ${{ secrets.DRIVE_ID }}
-          file_item_id: ${{ secrets.FILE_ITEM_ID }}
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          DRIVE_ID: ${{ secrets.DRIVE_ID }}
+          FILE_ITEM_ID: ${{ secrets.FILE_ITEM_ID }}
           MAILBOX_UPN: ${{ secrets.MAILBOX_UPN }}
         run: |
           python AIS.py
