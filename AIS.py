@@ -120,9 +120,9 @@ def extract_first_date_from_filename(fname: str) -> date:
 
 # -------------------- Auth --------------------
 def get_token() -> str:
-    tenant_id = must_env("tenant_id")
-    client_id = must_env("client_id")
-    client_secret = must_env("client_secret")
+    tenant_id = must_env("TENANT_ID")
+    client_id = must_env("CLIENT_ID")
+    client_secret = must_env("CLIENT_SECRET")
 
     app = ConfidentialClientApplication(
         client_id=client_id,
@@ -512,8 +512,8 @@ def write_daily_summary_to_workbook(wb, summary: Dict[str, Any]) -> int:
 def main():
     token = get_token()
 
-    drive_id = must_env("drive_id")
-    file_item_id = must_env("file_item_id")
+    drive_id = must_env("DRIVE_ID")
+    file_item_id = must_env("FILE_ITEM_ID")
 
     completed_msgs = messages_for_subject(token, MAILBOX_UPN, SUBJECT_COMPLETED, top_n=10)
     upcoming_msgs = messages_for_subject(token, MAILBOX_UPN, SUBJECT_UPCOMING, top_n=10)
