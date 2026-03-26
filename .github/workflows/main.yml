@@ -2,12 +2,8 @@ name: Daily Summary SharePoint Update
 
 on:
   schedule:
-    # 10:30 PM America/Chicago
-    # CST = 04:30 UTC next day
-    # CDT = 03:30 UTC next day
-    # GitHub Actions cron uses UTC, so use both
-    - cron: "30 4 * 1,2,11,12 *"
-    - cron: "30 3 * 3-10 *"
+    - cron: "30 22 * * *"
+      timezone: "America/Chicago"
   workflow_dispatch:
 
 jobs:
